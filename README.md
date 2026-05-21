@@ -2,7 +2,7 @@
 
 **Webhook Inspector, Replayer & Analytics Dashboard**
 
-> Capture, inspect, replay, and analyze webhooks in real-time.
+> Capture, inspect, replay, and analyze webhooks in real-time.  
 > Self-hostable alternative to RequestBin — with a proper analytics dashboard.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -29,6 +29,8 @@
 ---
 
 ## 🏗️ Architecture
+
+```
 ┌─────────────────────────────────────────────────────┐
 │                    webhookforge                      │
 ├──────────────────────┬──────────────────────────────┤
@@ -50,20 +52,21 @@
 │  packages/shared     │  │  DB   │  │  BullMQ  │     │
 │  (types + utils)     │  └───────┘  └──────────┘     │
 └──────────────────────┴─────────────────────────────-─┘
+```
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer      | Technology                                               |
-|------------|----------------------------------------------------------|
+| Layer      | Technology                                              |
+|------------|---------------------------------------------------------|
 | Frontend   | Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, Recharts |
-| Backend    | NestJS, TypeScript, WebSockets (Socket.io)               |
-| Queue      | Redis + BullMQ (async replay engine)                     |
-| Database   | PostgreSQL + Prisma ORM                                  |
-| Auth       | JWT + Refresh Tokens                                     |
-| DevOps     | Docker, Docker Compose, GitHub Actions CI                |
-| Deployment | Vercel (web) · Render (api) · Upstash (redis)            |
+| Backend    | NestJS, TypeScript, WebSockets (Socket.io)              |
+| Queue      | Redis + BullMQ (async replay engine)                    |
+| Database   | PostgreSQL + Prisma ORM                                 |
+| Auth       | JWT + Refresh Tokens                                    |
+| DevOps     | Docker, Docker Compose, GitHub Actions CI               |
+| Deployment | Vercel (web) · Render (api) · Upstash (redis)           |
 
 ---
 
@@ -105,12 +108,14 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000 🎉
+Open http://localhost:3000 🎉  
 API docs at http://localhost:3001/api
 
 ---
 
 ## 📁 Project Structure
+
+```
 webhookforge/
 ├── apps/
 │   ├── api/                        # NestJS backend
@@ -131,23 +136,51 @@ webhookforge/
 │           └── lib/                # API client, WebSocket client
 ├── packages/shared/                # Shared TypeScript types
 ├── docker-compose.yml
-└── .env.example
+├── .env.example
+└── .github/workflows/ci.yml
+```
 
 ---
 
 ## 🔌 API Reference
 
-| Method | Endpoint                    | Description                 |
-|--------|-----------------------------|-----------------------------|
-| POST   | `/api/auth/register`        | Register + create workspace |
-| POST   | `/api/auth/login`           | JWT login                   |
-| GET    | `/api/endpoints`            | List workspace endpoints    |
-| POST   | `/api/endpoints`            | Create webhook endpoint     |
-| GET    | `/api/requests/:endpointId` | List captured requests      |
-| POST   | `/api/replay`               | Replay to target URL        |
-| GET    | `/api/analytics/summary`    | Overview stats              |
-| GET    | `/api/analytics/timeline`   | Requests over time          |
-| WS     | `/gateway`                  | Real-time request stream    |
+| Method | Endpoint                   | Description                    |
+|--------|----------------------------|--------------------------------|
+| POST   | `/api/auth/register`       | Register + create workspace    |
+| POST   | `/api/auth/login`          | JWT login                      |
+| GET    | `/api/endpoints`           | List workspace endpoints       |
+| POST   | `/api/endpoints`           | Create new webhook endpoint    |
+| DELETE | `/api/endpoints/:id`       | Delete endpoint                |
+| GET    | `/api/requests/:endpointId`| List captured requests         |
+| GET    | `/api/requests/:id`        | Get request detail             |
+| POST   | `/api/replay`              | Replay request to target URL   |
+| GET    | `/api/analytics/summary`   | Overview stats                 |
+| GET    | `/api/analytics/timeline`  | Requests over time             |
+| WS     | `/gateway`                 | Real-time request stream       |
+
+---
+
+## ⚙️ Environment Variables
+
+```env
+# Database
+DATABASE_URL=postgresql://postgres:password@localhost:5432/webhookforge
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# Auth
+JWT_SECRET=your-super-secret
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_SECRET=your-refresh-secret
+JWT_REFRESH_EXPIRES_IN=7d
+
+# App
+PORT=3001
+NODE_ENV=development
+WEB_URL=http://localhost:3000
+WEBHOOK_BASE_URL=http://localhost:3001/hook
+```
 
 ---
 
