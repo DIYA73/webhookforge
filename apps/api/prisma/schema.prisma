@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  name         String
+  workspace    Workspace?
+  createdAt    DateTime   @default(now())
+}
+
+model Workspace {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  owner     User       @relation(fields: [ownerId], references: [id])
+  ownerId   String     @unique
+  endpoints Endpoint[]
+  createdAt DateTime   @default(now())
+}
+
+model Endpoint {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+  requests    Request[]
+  createdAt   DateTime  @default(now())
+
+  @@index([workspaceId])
+}
+
+model Request {
+  id         String      @id @default(cuid())
+  endpoint   Endpoint    @relation(fields: [endpointId], references: [id])
+  endpointId String
+  method     String
+  headers    Json
+  body       Json?
+  query      Json?
+  ip         String
+  userAgent  String?
+  size       Int         @default(0)
+  receivedAt DateTime    @default(now())
+  replayJobs ReplayJob[]
+
+  @@index([endpointId])
+  @@index([receivedAt])
+}
+
+model ReplayJob {
+  id             String       @id @default(cuid())
+  request        Request      @relation(fields: [requestId], references: [id])
+  requestId      String
+  targetUrl      String
+  status         ReplayStatus @default(PENDING)
+  attempts       Int          @default(0)
+  maxAttempts    Int          @default(3)
+  responseStatus Int?
+  responseTime   Int?
+  error          String?
+  createdAt      DateTime     @default(now())
+
+  @@index([requestId])
+}
+
+enum ReplayStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+}
