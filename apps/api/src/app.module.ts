@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { EndpointsModule } from './endpoints/endpoints.module';
 import { RequestsModule } from './requests/requests.module';
 import { ReplayModule } from './replay/replay.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 import { GatewayModule } from './gateway/gateway.module';
 import { PrismaModule } from './common/prisma/prisma.module';
 
@@ -17,6 +18,7 @@ import { PrismaModule } from './common/prisma/prisma.module';
     EndpointsModule,
     RequestsModule,
     ReplayModule,
+    AnalyticsModule,
     GatewayModule,
   ],
 })
