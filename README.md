@@ -1,4 +1,4 @@
-#  🔨webhookforge
+#  webhookforge
 
 **Webhook Inspector, Replayer & Analytics Dashboard**
 
